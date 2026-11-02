@@ -36,7 +36,7 @@ cd totp
 ./install.sh
 ```
 
-`install.sh` doesn't use sudo. It checks the packages above and prints the `apt install` line for any that are missing. Then it downloads `age-plugin-fido2-hmac` v0.5.0, verifies its SHA-256, and installs both into `~/.local/bin`. Set `TOTP_BIN` to install somewhere else.
+`install.sh` doesn't use sudo. It checks the packages above and prints the `apt install` line for any that are missing. Then it downloads `age-plugin-fido2-hmac` v0.5.0, verifies its SHA-256, and installs both into `~/.local/bin`. Set `TOTP_BIN` to install somewhere else. If you plan to change the script, run `./install.sh --link`: `~/.local/bin/totp` then points to your checkout instead of being a copy.
 
 Then, with the key plugged in:
 

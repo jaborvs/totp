@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 # Install totp and its age plugin into ~/.local/bin (no root needed).
 # Packages are only checked; the missing ones are printed as one apt command.
+#   --link  symlink totp to this checkout instead of copying it (edits here take effect at once)
 set -euo pipefail
+
+LINK=false
+case "${1:-}" in
+    "") ;;
+    --link) LINK=true ;;
+    *) echo "usage: $0 [--link]" >&2; exit 2 ;;
+esac
 
 BIN="${TOTP_BIN:-$HOME/.local/bin}"
 PLUGIN_VERSION="v0.5.0"
@@ -49,8 +57,14 @@ if [ "$(sha256sum "$BIN/age-plugin-fido2-hmac" 2>/dev/null | cut -d' ' -f1)" != 
     install -m755 "$tmp/age-plugin-fido2-hmac/age-plugin-fido2-hmac" "$BIN/"
     echo "Installed age-plugin-fido2-hmac $PLUGIN_VERSION"
 fi
-install -m755 "$HERE/totp" "$BIN/totp"
-echo "Installed $BIN/totp"
+if $LINK; then
+    ln -sfn "$HERE/totp" "$BIN/totp"
+    echo "Linked $BIN/totp -> $HERE/totp"
+else
+    rm -f "$BIN/totp"  # a previous --link symlink would otherwise be written through
+    install -m755 "$HERE/totp" "$BIN/totp"
+    echo "Installed $BIN/totp"
+fi
 
 case ":$PATH:" in
     *":$BIN:"*) ;;
