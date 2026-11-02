@@ -8,7 +8,7 @@ Pick an account in a rofi menu, touch the key, and the code is copied to the cli
 
 | Step | What happens |
 |---|---|
-| `totp init` | Creates a FIDO2 credential on the key and saves its public **recipient** to `~/.config/totp/recipient`. |
+| `totp init` | Creates a FIDO2 credential on the key and saves its public recipient to `~/.config/totp/recipient`. |
 | `totp add` | Encrypts the `otpauth://` URI to that recipient into `~/.local/share/totp/<name>.age`. No key needed. |
 | `totp pick` | Shows the accounts in rofi, decrypts the chosen one (touch the key), computes the code and copies it. |
 
@@ -44,7 +44,7 @@ Then, with the key plugged in:
 totp init
 ```
 
-The plugin asks two questions. The recommended answers are **no** to "PIN to decrypt" (a touch is enough) and **no** to "separate identity" (nothing secret is left on disk).
+The plugin asks two questions. Answer no to "PIN to decrypt", since a touch is enough, and no to "separate identity", so nothing secret is left on disk.
 
 ## Usage
 
@@ -67,7 +67,9 @@ totp add github                 # prompts for the secret without echoing it
 
 Avoid passing the secret as an argument: it would end up in your shell history.
 
-**Moving from Google Authenticator:** in the app, go to *Transfer accounts → Export*. Then run `totp import-google` and show each QR to the webcam. You can also pass screenshots of the QRs as `IMAGE` arguments. While the webcam scans, the exposure changes on its own so the phone screen becomes readable.
+### Moving from Google Authenticator
+
+In the app, open *Transfer accounts* and choose *Export*. Then run `totp import-google` and show each QR to the webcam, or pass screenshots of the QRs as `IMAGE` arguments. While the webcam scans, totp adjusts the exposure so the phone screen stays readable.
 
 ### Keybinding (sway)
 
@@ -87,10 +89,10 @@ If the menu is started from a key binding, `~/.local/bin` doesn't need to be in 
 
 ## Backups and losing the key
 
-The `.age` files are useless without **the same physical key**: if you lose it or reset its FIDO2 application, every account is gone. Before you rely on this, choose at least one of these:
+The `.age` files only open with the same physical key. If you lose it or reset its FIDO2 application, every account is gone, so set up at least one fallback before you rely on this:
 
-- **Keep the setup codes.** Most sites show recovery codes when you enable 2FA; store them somewhere safe.
-- **Use a second key.** age encrypts to every recipient line in `~/.config/totp/recipient`. Add the second key's recipient there, then add the accounts again with `totp add NAME --force`. Files encrypted before that only open with the first key.
+- Keep the recovery codes most sites show when you enable 2FA, somewhere safe.
+- Add a second key. age encrypts to every recipient line in `~/.config/totp/recipient`, so add the second key's recipient there and add the accounts again with `totp add NAME --force`. Files encrypted before that still open only with the first key.
 
 Back up `~/.local/share/totp/` and `~/.config/totp/recipient` along with your other files. Neither is secret on its own: they only open with the key.
 
@@ -100,7 +102,7 @@ Back up `~/.local/share/totp/` and `~/.config/totp/recipient` along with your ot
 python3 -m unittest discover -s tests
 ```
 
-The tests cover the RFC 6238 test vectors, URI and Google-export parsing, and the full `add → code → rm` flow. They need no security key: the flow encrypts to an ordinary age key instead. The rofi menu and the key itself aren't covered by the tests.
+The tests check the RFC 6238 test vectors, URI and Google export parsing, and a full run of `add`, `code` and `rm`. They encrypt to an ordinary age key, so you don't need a security key to run them. They don't exercise the rofi menu or a real key.
 
 ## License
 
