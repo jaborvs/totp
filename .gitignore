@@ -1,0 +1,5 @@
+__pycache__/
+# Never commit secrets or key material
+*.age
+recipient
+identity
