@@ -87,6 +87,17 @@ If the menu is started from a key binding, `~/.local/bin` doesn't need to be in 
 | Menu icons | `~/.local/share/totp/icons/<name>.svg` or `.png`. Otherwise it uses the matching Papirus app icon if installed, else a generic key. |
 | rofi prompt | `TOTP_PROMPT` environment variable, e.g. a Nerd Font glyph. |
 
+### With yubikey-touch-detector and mako
+
+If you run [yubikey-touch-detector](https://github.com/maximbaz/yubikey-touch-detector) for touch prompts in `ssh`, git signing and the browser, `totp pick` would show two prompts at once. While it waits for the touch, `totp pick` turns on the mako mode `totp`, so a rule in `~/.config/mako/config` can hide the detector's prompt:
+
+```ini
+[mode=totp app-name=yubikey-touch-detector]
+invisible=1
+```
+
+Without mako, `totp` skips this step.
+
 ## Backups and losing the key
 
 The `.age` files only open with the same physical key. If you lose it or reset its FIDO2 application, every account is gone, so set up at least one fallback before you rely on this:
